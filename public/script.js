@@ -26,6 +26,21 @@ function populate() {
 			}
 		}	
 		
+			
+		// Check for existence of/ set up local storage
+		if(localStorage['voted']) {
+			voted = JSON.parse(localStorage['voted'])
+		} else { 
+			localStorage.setItem("voted", JSON.stringify([]))
+			voted = JSON.parse(localStorage['voted']);
+		}
+		voted.length = data.length
+		for(i=0;i<voted.length;i++){
+			if(voted[i]===undefined || voted[i]===false) {
+					voted[i] = false;
+			}
+		}
+		
 		// populate profiles
 		lines.forEach((x,i) => {
 			imgs[i].src = data[i].image_url;
@@ -34,6 +49,14 @@ function populate() {
 			description[i].innerHTML = data[i].description;
 			names2[i].innerHTML = `Love ${names3(i)}?`;
 			thumb[i].src = "thumbs-up.svg";
+			
+			// Use local storage to check if user has already voted.
+			if(voted[i]===false) {
+				names2[i].innerHTML = `Love ${names3(i)}?`;
+			} else {
+				names2[i].innerHTML = `Thanks for voting for ${names3(i)}!`;
+				vote[i].innerHTML = "";
+			}
 		})
 		
 		// load votes
@@ -72,6 +95,9 @@ function populate() {
 						}	
 					})
 
+					// update local storage		
+					voted[i] = true;
+					localStorage.setItem("voted", JSON.stringify(voted));
 				})
 			})
 		})	
